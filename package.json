@@ -1,0 +1,23 @@
+{
+  "name": "taller_crypt",
+  "version": "1.0.0",
+  "description": "_Este proyecto consiste en el desarrollo de un Backend completo utilizando el stack tecnológico MEAN (MongoDB, Express, Angular, Node.js). El objetivo principal es crear una API RESTful que permita realizar operaciones CRUD (Crear, Leer, Actualizar, Borrar) sobre una base de datos MongoDB._",
+  "homepage": "https://github.com/Alvaroo42/taller_crypt#readme",
+  "bugs": {
+    "url": "https://github.com/Alvaroo42/taller_crypt/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alvaroo42/taller_crypt.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0"
+  }
+}
