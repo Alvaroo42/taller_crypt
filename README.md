@@ -38,106 +38,134 @@ sudo apt update
 sudo apt install -y mongodb
 sudo systemctl start mongodb
 ```
+# Fase 2: Seguridad y Autenticación (Guía 06)
 
-### Instalación 🔧
+En esta segunda fase estamos implementando la capa de seguridad de la API, centrada en la autenticación mediante Tokens (WS Auth).  
 
-_En esta sección veremos cómo instalar y configurar el entorno de desarrollo para trabajar con el proyecto._
+Antes de integrar la seguridad en el servidor principal, hemos desarrollado una serie de scripts de prueba para comprender las tecnologías implicadas.
 
-_En primer lugar, debemos clonar el proyecto desde nuestro repositorio._
+---
 
-```sh
-git clone https://pmacia@bitbucket.org/pmacia/api-rest.git
-```
+## 🧪 Prueba 1: Criptografía de contraseñas (bcrypt)
 
-_Una vez clonado el respositorio, debemos instalar y actualizar todas las bibliotecas de código y dependencias del proyecto._
+**Descripción:**  
+Implementación de la librería `bcrypt` para proteger las contraseñas de los usuarios antes de guardarlas en la base de datos.
 
-```sh
-cd api-rest
-npm i
-```
+**Conceptos clave:**
+- Generación de **Salts** (datos aleatorios).
+- Creación de **Hashes irreversibles** (con un coste de procesamiento de 10 iteraciones).
+- Comparación de contraseñas en texto plano contra hashes.
+- Uso de **Callbacks** y **Promesas** para pruebas de validación.
 
-_Para poner el proyecto en marcha, ejecutaremos el siguiente comando:_
+---
 
-```sh
-npm start
-```
+## 🧪 Prueba 2: Gestión de Fechas y Tiempos (moment)
 
-## Pruebas con Postman 📯
+**Descripción:**  
+Uso de la librería `moment.js` para estandarizar el manejo del tiempo en el servidor.
 
-_El archivo `CRUD_postman_collection.json` contiene una colección de pruebas para todos los **endpoints** del API del servicio._
+**Conceptos clave:**
+- Obtención de fechas actuales.
+- Manipulación del tiempo (añadir días/horas).
+- Conversión a formato **Unix Timestamp**.
+- Gestión de la caducidad lógica de los tokens de sesión.
 
-_Para poder emplearlo desde **Postman**, bastará con importar el archivo y, si fuera necesario, modificar el puerto de escucha del servidor._
+---
 
-<!-- ## Ejecutando las pruebas ⚙️
+## 🧪 Prueba 3: Estructura de un JSON Web Token (JWT)
 
-_Explica cómo ejecutar las pruebas automatizadas para este sistema._
+**Descripción:**  
+Estudio de la anatomía de un token JWT:
 
-### Analice las pruebas end-to-end 🔩
+- **Cabecera (Header)**
+- **Payload**
+- **Firma (Signature)**
 
-_Explica qué verifican estas pruebas y por qué_
+**Conceptos clave:**
+- Codificación en formato **Base64Url**.
+- Uso de firma digital para garantizar que los datos no han sido manipulados por el cliente.
 
-```
-Proporciona un ejemplo
-```
+---
 
-### Y las pruebas de estilo de codificación ⌨️
+## 🧪 Prueba 4: Módulo Helper para Tokens (jwt-simple)
 
-_Explica qué verifican estas pruebas y por qué_
+**Descripción:**  
+Creación de un módulo reutilizable para abstraer la lógica de generación y validación de tokens.
 
-```
-Proporciona un ejemplo
-``` -->
+**Conceptos clave:**
+- Uso de una clave secreta (`SECRET`) y tiempo de expiración centralizados en `config.js`.
 
-## Despliegue 📦
+### 🔹 Método `creaToken(user)`
+Genera un token firmado inyectando:
+- ID del usuario
+- Fecha de creación (`iat`)
+- Fecha de caducidad (`exp`)
 
-_Agrega notas adicionales sobre cómo hacer deploy._
+### 🔹 Método `decodificaToken(token)`
+- Uso de **Promesas** para verificar la validez del token.
+- Captura y gestión de errores comunes:
+  - Token caducado
+  - Token mal formado
+  - Firma inválida
 
-## Construido con 🛠️
+---
 
-* [Express](https://expressjs.com/es/) - Infraestructura de aplicaciones web Node.js mÃ­nima y flexible que proporciona un conjunto sólido de caracterí­sticas para las aplicaciones web y móviles.
-* [mongodb](https://www.mongodb.com/docs/drivers/node/current/) - official MongoDB Node.js driver. You can add the driver to your application to work with MongoDB in JavaScript.
-* [mongojs](github.com/mongo-js/mongojs#readme) - Iofficial MongoDB Node.js driver. You can add the driver to your application to work with MongoDB in JavaScript.
-* [cors](github.com/expressjs/cors#readme) - CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
-* [helmet](helmetjs.github.io/) - IHelmet helps you secure your Express apps by setting various HTTP headers. It's not a silver bullet, but it can help!
-* [morgan](github.com/expressjs/morgan#readme) - HTTP request logger middleware for node.js.
-* [nodemon](https://www.npmjs.com/package/nodemon) - Herramienta que ayuda a desarrollar aplicaciones basadas en node.js reiniciando automáticamente la aplicación de node cuando se detectan cambios de archivos en el directorio.
-* [jwt-simple](https://github.com/hokaccha/node-jwt-simple#readme) - JWT(JSON Web Token) encode and decode module for node.js.
-* [moment](https://momentjs.com) - A JavaScript date library for parsing, validating, manipulating, and formatting dates.
+# 📦 Despliegue
 
-<!-- ## Contribuyendo 🖇️
+Agrega aquí notas adicionales sobre cómo realizar el deployment del proyecto:
 
-Por favor lee el [CONTRIBUTING.md](https://gist.github.com/tu/tuProyecto) para detalles de nuestro código de conducta, y el proceso para enviarnos pull requests.
+- Configuración de variables de entorno.
+- Uso de HTTPS.
+- Configuración de servidor
+- Configuración de producción (`NODE_ENV=production`).
 
-## Wiki 📖
+---
 
-Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki](https://github.com/tu/proyecto/wiki) -->
+# 🛠️ Construido con
 
-## Versionado 📌
+- **Express** – Infraestructura de aplicaciones web Node.js mínima y flexible que proporciona un conjunto sólido de características para aplicaciones web y móviles.
+- **MongoDB Node.js Driver** – Driver oficial para trabajar con MongoDB en aplicaciones JavaScript.
+- **CORS** – Middleware para habilitar CORS en aplicaciones Node.js/Express.
+- **Helmet** – Ayuda a proteger aplicaciones Express configurando distintos headers HTTP.
+- **Morgan** – Middleware para logging de peticiones HTTP en Node.js.
+- **Nodemon** – Herramienta que reinicia automáticamente la aplicación al detectar cambios en los archivos.
+- **jwt-simple** – Módulo para codificar y decodificar JWT en Node.js.
+- **Moment.js** – Librería para manipulación y formateo de fechas.
+- **bcrypt** – Librería para el hash seguro de contraseñas.
 
-Usamos [SemVer](http://semver.org/) para el versionado. Para todas las versiones disponibles, mira los [tags en este repositorio](https://https://bitbucket.org/pmacia/api-rest/commits/).
+---
 
-En este respositorio se pueden encontrar la evolución del proyecto desde la estructura básica de un servicio, hasta un servicio CRUD completo con comunicación HTTPS, soporte para CORS, seguridad con Helmet y autorización tipo bearer basada en tokens tipo JWT:
+# 📌 Versionado
 
-tag     | Descripción
-------- | ------------------------------------------
-v1.0.25 | API Rest Hola Mundo.
-v2.0.0  | API Rest CRUD (sin DB).
-v3.0.0  | API Rest CRUD (con DB MongoDB).
-v3.1.0  | API Rest CRUD con seguridad.
-v3.2.0  | API Rest CRUD con seguridad y auth basado en Bearer JWT.
+Usamos **Git** para el versionado.  
+Para todas las versiones disponibles, consulta los **tags del repositorio**.
+
+En este repositorio se puede encontrar la evolución del proyecto desde la estructura básica de un servicio, hasta un servicio CRUD completo con:
+
+- Comunicación HTTPS
+- Soporte para CORS
+- Seguridad con Helmet
+- Autorización tipo Bearer basada en tokens JWT
+
+---
+
+## 📜 Historial de versiones
+
+| Tag     | Descripción |
+|---------|-------------|
+| v1.0.25 | API Rest Hola Mundo. |
+| v2.0.0  | API Rest CRUD (sin DB). |
+| v3.0.0  | API Rest CRUD (con DB MongoDB). |
+| v3.1.0  | API Rest CRUD con seguridad. |
+| v3.2.0  | API Rest CRUD con seguridad y auth basado en Bearer JWT. |
 
 ## Autores ✒️
 
 _Todos aquellos que ayudaron a levantar el proyecto desde sus inicios:_
 
-* **Paco Maciá** - _Trabajo Inicial_ - [pmacia](https://github.com/pmacia)
-* **Álvaro Márquez Sirvent** - _Documentación y desarrollo_ - [ams](#fulanito-de-tal)
+* **Paco Maciá** - _Trabajo Inicial_ - [pmacia]
+* **Álvaro Márquez Sirvent** - _Documentación y desarrollo_ - [ams]
 
-También puedes mirar la lista de todos los [contribuyentes](https://github.com/your/project/contributors) quiénes han participado en este proyecto.
-
-## Licencia 📄
-
-Este proyecto está bajo la Licencia (Tu Licencia) - mira el archivo [LICENSE.md](LICENSE.md) para detalles
 
 ## Expresiones de Gratitud 🎁
 
